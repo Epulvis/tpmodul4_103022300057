@@ -3,7 +3,12 @@
     private static void Main(string[] args)
     {
         KodePos kodePos = new KodePos();
-        Console.WriteLine(kodePos.GetKodePos("Batununggal"));
+        Console.WriteLine(kodePos.GetKodePos("Batununggal") + "\n");
+
+        DoorMachine door = new DoorMachine();
+        door.UnlockDoor();
+        door.LockDoor();
+        door.UnlockDoor();
     }
 
 }
@@ -40,5 +45,53 @@ public class KodePos
         {
             return "Kode pos tidak ditemukan";
         }
+    }
+}
+
+public interface IDoorState
+{
+    void HandleState(DoorMachine door);
+}
+
+public class LockedState : IDoorState
+{
+    public void HandleState(DoorMachine door)
+    {
+        Console.WriteLine("Pintu terkunci");
+    }
+}
+
+public class UnlockedState : IDoorState
+{
+    public void HandleState(DoorMachine door)
+    {
+        Console.WriteLine("Pintu tidak terkunci");
+    }
+}
+
+public class DoorMachine
+{
+    private IDoorState _currentState;
+
+    public DoorMachine()
+    {
+        _currentState = new LockedState();
+        _currentState.HandleState(this);
+    }
+
+    public void SetState(IDoorState newState)
+    {
+        _currentState = newState;
+        _currentState.HandleState(this);
+    }
+
+    public void LockDoor()
+    {
+        SetState(new LockedState());
+    }
+
+    public void UnlockDoor()
+    {
+        SetState(new UnlockedState());
     }
 }
